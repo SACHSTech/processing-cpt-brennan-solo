@@ -20,7 +20,6 @@ public class Sketch extends PApplet {
   float[] previousY = new float[currentRound];
 
 
-	
   /**
    * Called once at the beginning of execution, put your size all in this method
    */
@@ -45,14 +44,14 @@ public class Sketch extends PApplet {
    */
   public void draw() {
     if (playerAlive == true) {
-      for (int i = 0; i <= currentRound; i++) {
+      for (int i = 0; i < currentRound; i++) {
         fill(255, 255, 255);
         rect (previousX[i], previousY[i], previousWidth[i], intSquareHeight);
       }
     
       rect (movingX, previousY[currentRound - 1] - intSquareHeight, previousWidth[currentRound - 1], intSquareHeight);
       movingX += squareSpeed;
-
+      
       if (movingX >= (500 - previousWidth[currentRound - 1])) {
         squareSpeed = -squareSpeed;
         movingX = 500 - previousWidth[currentRound - 1];   
@@ -61,6 +60,8 @@ public class Sketch extends PApplet {
         squareSpeed = -squareSpeed;
         movingX = 0;
       }
+
+      
 
     }
   }
