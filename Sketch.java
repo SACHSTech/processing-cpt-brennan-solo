@@ -31,7 +31,7 @@ public class Sketch extends PApplet {
   ArrayList<Float> RBGGreen = new ArrayList<Float>();
   int intColourChange = 10;
   float fltMaxColour = 255;
-  float fltMinColour = 255;
+  float fltMinColour = 0;
 
   /**
    * Called once at the beginning of execution, put your size all in this method
@@ -105,7 +105,7 @@ public class Sketch extends PApplet {
       intScore++;
     }
     // If clicked to the left of base
-    else if (movingX.get(roundCount - 1) + previousWidth.get(roundCount - 1) > previousX.get(roundCount - 1) &&  movingX.get(roundCount - 1) < previousX.get(roundCount - 1)){
+    else if (movingX.get(roundCount - 1) < previousX.get(roundCount - 1) && movingX.get(roundCount - 1) + previousWidth.get(roundCount - 1) > previousX.get(roundCount - 1)){
       previousX.add(previousX.get(roundCount - 1));
       previousWidth.add(previousWidth.get(roundCount - 1) + movingX.get(roundCount - 1) - previousX.get(roundCount - 1));
       previousY.add(previousY.get(roundCount - 1) - blockHeight);
@@ -116,7 +116,7 @@ public class Sketch extends PApplet {
       previousX.add(movingX.get(roundCount - 1));
       previousWidth.add(previousWidth.get(roundCount - 1));
       previousY.add(previousY.get(roundCount - 1) - blockHeight);
-      intScore += 3;
+      intScore++;
     }
     // If block misses the previous block, end game
     else {
@@ -138,6 +138,30 @@ public class Sketch extends PApplet {
           RBGBlue.remove(roundCount);
           RBGBlue.add(fltMaxColour);
           RBGGreen.add(RBGGreen.get(roundCount - 1) + intColourChange);
+          if (RBGGreen.get(roundCount) >= 255){
+            RBGGreen.remove(roundCount);
+            RBGGreen.add(fltMaxColour);
+            RBGRed.remove(roundCount);
+            RBGRed.add(RBGGreen.get(roundCount - 1) - intColourChange);
+            if (RBGRed.get(roundCount) <= 0){
+              RBGRed.remove(roundCount);
+              RBGRed.add(fltMinColour);
+              RBGBlue.add(RBGBlue.get(roundCount - 1) - intColourChange);
+              if (RBGBlue.get(roundCount) <= 0){
+                RBGBlue.remove(roundCount);
+                RBGBlue.add(fltMinColour);
+                RBGGreen.add(RBGGreen.get(roundCount - 1) - intColourChange);
+                if (RBGGreen.get(roundCount) <= 0){
+                  RBGGreen.remove(roundCount);
+                  RBGBlue.remove(roundCount);
+                  RBGRed.remove(roundCount);
+                  RBGRed.add(random(100, 240));
+                  RBGBlue.add(random(100, 240));
+                  RBGGreen.add(random(100, 240));
+                }
+              }
+            }
+          }
         }
       }
       else {
