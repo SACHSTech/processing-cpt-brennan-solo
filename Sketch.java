@@ -40,10 +40,10 @@ public class Sketch extends PApplet {
     previousX.add((width - beginningWidth) / 2);
     previousY.add(height - intSquareHeight);
     previousWidth.add(beginningWidth);
+
     for (int i = 0; i < 100; i++){
       movingX.add(0);
     }
-
   }
 
   /**
@@ -54,6 +54,10 @@ public class Sketch extends PApplet {
     if (playerAlive == true) {
       background(0);
 
+      textSize(25);
+      fill(255, 0, 0);
+      text("Score: " + intScore, 15, 30); 
+
       for (int i = 0; i < roundCount; i++) {
         fill(255, 255, 255);
         rect (previousX.get(i), previousY.get(i), previousWidth.get(i), intSquareHeight);
@@ -62,7 +66,7 @@ public class Sketch extends PApplet {
       rect (movingX.get(roundCount - 1), previousY.get(roundCount - 1) - intSquareHeight, previousWidth.get(roundCount - 1), intSquareHeight);
       movingX.set(roundCount - 1, movingX.get(roundCount - 1) + squareSpeed);
       
-      if (movingX.get(roundCount - 1) >= (500 - previousWidth.get(roundCount - 1))) {
+      if (movingX.get(roundCount - 1) >= (width - previousWidth.get(roundCount - 1))) {
         squareSpeed = -squareSpeed;  
       } 
       else if (movingX.get(roundCount - 1) <= 0) {
@@ -80,14 +84,14 @@ public class Sketch extends PApplet {
   public void mousePressed() {
     mouseClicked = true;
     // If clicked to the right of base
-    if (movingX.get(roundCount - 1) > previousX.get(roundCount - 1) && movingX.get(roundCount - 1) <= previousX.get(roundCount - 1) + previousWidth.get(roundCount - 1)){
+    if (movingX.get(roundCount - 1) > previousX.get(roundCount - 1) && movingX.get(roundCount - 1) < previousX.get(roundCount - 1) + previousWidth.get(roundCount - 1)){
       previousX.add(movingX.get(roundCount - 1));
       previousWidth.add(previousWidth.get(roundCount - 1) - movingX.get(roundCount - 1) + previousX.get(roundCount - 1));
       previousY.add(previousY.get(roundCount - 1) - intSquareHeight);
       intScore++;
     }
     // If clicked to the left of base
-    else if (movingX.get(roundCount - 1) + previousWidth.get(roundCount - 1) > previousX.get(roundCount - 1) &&  movingX.get(roundCount - 1) + previousWidth.get(roundCount - 1) <= previousX.get(roundCount - 1) + previousWidth.get(roundCount - 1)){
+    else if (movingX.get(roundCount - 1) + previousWidth.get(roundCount - 1) > previousX.get(roundCount - 1) &&  movingX.get(roundCount - 1) < previousX.get(roundCount - 1)){
       previousX.add(previousX.get(roundCount - 1));
       previousWidth.add(previousWidth.get(roundCount - 1) + movingX.get(roundCount - 1) - previousX.get(roundCount - 1));
       previousY.add(previousY.get(roundCount - 1) - intSquareHeight);
@@ -100,21 +104,25 @@ public class Sketch extends PApplet {
       previousY.add(previousY.get(roundCount - 1) - intSquareHeight);
       intScore += 3;
     }
-    // If box misses the previous, end game
+    // If box misses the previous box, end game
     else {
         playerAlive = false;
     }
 
     if (playerAlive == true){
-      if (squareSpeed <= 0){
+      
+      if (squareSpeed < 0){
         squareSpeed = -squareSpeed;
       }
 
       roundCount++;
       if (roundCount % 2 == 1 && roundCount > 1){
         squareSpeed++;
+        movingX.add(roundCount, width - previousWidth.get(roundCount - 1) - 1);
+        movingX.remove(roundCount - 1);
       }
 
+      // Move the game back down to the bottom of the screen every 15 rounds
       if ((roundCount - 1) % 15 == 0 && roundCount > 1){
         intOldX = previousX.get(roundCount - 1);
         intOldY = previousY.get(roundCount - 1);
