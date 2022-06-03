@@ -7,22 +7,24 @@ import java.util.*;
  */
 
 public class Sketch extends PApplet {
-	int intSquareHeight = 30;
-  int beginningWidth = 300;
+  float blockHeight = 30;
+  float beginningWidth = 300;
+  float beginningX = 0;
   int roundCount = 1;
-  int squareSpeed = 1;
+  int blockSpeed = 1;
   int intScore = 0;
-  int intOldX;
-  int intOldY;
-  int intOldWidth;
+
+  float intOldX;
+  float intOldY;
+  float intOldWidth;
 
   boolean playerAlive = true;
   boolean mouseClicked = false;
 
-  ArrayList<Integer> movingX = new ArrayList<Integer>();
-  ArrayList<Integer> previousWidth = new ArrayList<Integer>();
-  ArrayList<Integer> previousX = new ArrayList<Integer>();
-  ArrayList<Integer> previousY = new ArrayList<Integer>();
+  ArrayList<Float> movingX = new ArrayList<Float>();
+  ArrayList<Float> previousWidth = new ArrayList<Float>();
+  ArrayList<Float> previousX = new ArrayList<Float>();
+  ArrayList<Float> previousY = new ArrayList<Float>();
 
   /**
    * Called once at the beginning of execution, put your size all in this method
@@ -38,12 +40,9 @@ public class Sketch extends PApplet {
    */
   public void setup() {
     previousX.add((width - beginningWidth) / 2);
-    previousY.add(height - intSquareHeight);
+    previousY.add(height - blockHeight);
     previousWidth.add(beginningWidth);
-
-    for (int i = 0; i < 100; i++){
-      movingX.add(0);
-    }
+    movingX.add(beginningX);
   }
 
   /**
@@ -60,17 +59,17 @@ public class Sketch extends PApplet {
 
       for (int i = 0; i < roundCount; i++) {
         fill(255, 255, 255);
-        rect (previousX.get(i), previousY.get(i), previousWidth.get(i), intSquareHeight);
+        rect (previousX.get(i), previousY.get(i), previousWidth.get(i), blockHeight);
       }
       
-      rect (movingX.get(roundCount - 1), previousY.get(roundCount - 1) - intSquareHeight, previousWidth.get(roundCount - 1), intSquareHeight);
-      movingX.set(roundCount - 1, movingX.get(roundCount - 1) + squareSpeed);
+      rect (movingX.get(roundCount - 1), previousY.get(roundCount - 1) - blockHeight, previousWidth.get(roundCount - 1), blockHeight);
+      movingX.set(roundCount - 1, movingX.get(roundCount - 1) + blockSpeed);
       
       if (movingX.get(roundCount - 1) >= (width - previousWidth.get(roundCount - 1))) {
-        squareSpeed = -squareSpeed;  
+        blockSpeed = -blockSpeed;  
       } 
       else if (movingX.get(roundCount - 1) <= 0) {
-        squareSpeed = -squareSpeed;
+        blockSpeed = -blockSpeed;
       }
 
     }
@@ -87,39 +86,41 @@ public class Sketch extends PApplet {
     if (movingX.get(roundCount - 1) > previousX.get(roundCount - 1) && movingX.get(roundCount - 1) < previousX.get(roundCount - 1) + previousWidth.get(roundCount - 1)){
       previousX.add(movingX.get(roundCount - 1));
       previousWidth.add(previousWidth.get(roundCount - 1) - movingX.get(roundCount - 1) + previousX.get(roundCount - 1));
-      previousY.add(previousY.get(roundCount - 1) - intSquareHeight);
+      previousY.add(previousY.get(roundCount - 1) - blockHeight);
       intScore++;
     }
     // If clicked to the left of base
     else if (movingX.get(roundCount - 1) + previousWidth.get(roundCount - 1) > previousX.get(roundCount - 1) &&  movingX.get(roundCount - 1) < previousX.get(roundCount - 1)){
       previousX.add(previousX.get(roundCount - 1));
       previousWidth.add(previousWidth.get(roundCount - 1) + movingX.get(roundCount - 1) - previousX.get(roundCount - 1));
-      previousY.add(previousY.get(roundCount - 1) - intSquareHeight);
+      previousY.add(previousY.get(roundCount - 1) - blockHeight);
       intScore++;
     }
     // If clicked directly on base
     else if (movingX.get(roundCount - 1) == previousX.get(roundCount - 1)){
       previousX.add(movingX.get(roundCount - 1));
       previousWidth.add(previousWidth.get(roundCount - 1));
-      previousY.add(previousY.get(roundCount - 1) - intSquareHeight);
+      previousY.add(previousY.get(roundCount - 1) - blockHeight);
       intScore += 3;
     }
-    // If box misses the previous box, end game
+    // If block misses the previous block, end game
     else {
         playerAlive = false;
     }
 
     if (playerAlive == true){
       
-      if (squareSpeed < 0){
-        squareSpeed = -squareSpeed;
+      if (blockSpeed < 0){
+        blockSpeed = -blockSpeed;
       }
 
       roundCount++;
       if (roundCount % 2 == 1 && roundCount > 1){
-        squareSpeed++;
-        movingX.add(roundCount, width - previousWidth.get(roundCount - 1) - 1);
-        movingX.remove(roundCount - 1);
+        blockSpeed++;
+        movingX.add(width - previousWidth.get(roundCount - 1) - 1);
+      }
+      else if (roundCount > 1) {
+        movingX.add(beginningX);
       }
 
       // Move the game back down to the bottom of the screen every 15 rounds
@@ -133,7 +134,7 @@ public class Sketch extends PApplet {
         previousWidth.clear();
 
         previousX.add(intOldX);
-        previousY.add(height - intSquareHeight);
+        previousY.add(height - blockHeight);
         previousWidth.add(intOldWidth);
         roundCount = 1;
       }
