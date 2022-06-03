@@ -29,9 +29,9 @@ public class Sketch extends PApplet {
   ArrayList<Float> RBGRed = new ArrayList<Float>();
   ArrayList<Float> RBGBlue = new ArrayList<Float>();
   ArrayList<Float> RBGGreen = new ArrayList<Float>();
-  int intRedChange = 10;
-  int intBlueChange = 10;
-  int intGreenChange = 10;
+  int intColourChange = 10;
+  float fltMaxColour = 255;
+  float fltMinColour = 255;
 
   /**
    * Called once at the beginning of execution, put your size all in this method
@@ -51,10 +51,12 @@ public class Sketch extends PApplet {
     previousWidth.add(beginningWidth);
     movingX.add(beginningX);
 
-    RBGRed.add(random(100, 255));
-    RBGBlue.add(random(100, 255));
-    RBGGreen.add(random(100, 255));
-
+    RBGRed.add(random(100, 240));
+    RBGBlue.add(random(100, 240));
+    RBGGreen.add(random(100, 240));
+    RBGRed.add(RBGRed.get(0) + intColourChange);
+    RBGBlue.add(RBGBlue.get(0));
+    RBGGreen.add(RBGGreen.get(0));
   }
 
   /**
@@ -74,7 +76,7 @@ public class Sketch extends PApplet {
         rect (previousX.get(i), previousY.get(i), previousWidth.get(i), blockHeight);
       }
       
-      fill(RBGRed.get(roundCount - 1), RBGBlue.get(roundCount - 1), RBGGreen.get(roundCount - 1));
+      fill(RBGRed.get(roundCount), RBGBlue.get(roundCount), RBGGreen.get(roundCount));
       rect (movingX.get(roundCount - 1), previousY.get(roundCount - 1) - blockHeight, previousWidth.get(roundCount - 1), blockHeight);
       movingX.set(roundCount - 1, movingX.get(roundCount - 1) + blockSpeed);
       
@@ -125,6 +127,22 @@ public class Sketch extends PApplet {
       
       if (blockSpeed < 0){
         blockSpeed = -blockSpeed;
+      }
+
+      RBGRed.add(RBGRed.get(roundCount - 1) + intColourChange);
+      if (RBGRed.get(roundCount) >= 255){
+        RBGRed.remove(roundCount);
+        RBGRed.add(fltMaxColour);
+        RBGBlue.add(RBGBlue.get(roundCount - 1) + intColourChange);
+        if (RBGBlue.get(roundCount) >= 255){
+          RBGBlue.remove(roundCount);
+          RBGBlue.add(fltMaxColour);
+          RBGGreen.add(RBGGreen.get(roundCount - 1) + intColourChange);
+        }
+      }
+      else {
+        RBGBlue.add(RBGBlue.get(roundCount - 1));
+        RBGGreen.add(RBGGreen.get(roundCount - 1));
       }
 
       roundCount++;
