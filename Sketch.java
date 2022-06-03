@@ -12,6 +12,9 @@ public class Sketch extends PApplet {
   int roundCount = 1;
   int squareSpeed = 1;
   int intScore = 0;
+  int intOldX;
+  int intOldY;
+  int intOldWidth;
 
   boolean playerAlive = true;
   boolean mouseClicked = false;
@@ -37,9 +40,10 @@ public class Sketch extends PApplet {
     previousX.add((width - beginningWidth) / 2);
     previousY.add(height - intSquareHeight);
     previousWidth.add(beginningWidth);
-    for (int i = 0; i < 200; i++){
+    for (int i = 0; i < 100; i++){
       movingX.add(0);
     }
+
   }
 
   /**
@@ -110,8 +114,22 @@ public class Sketch extends PApplet {
       if (roundCount % 2 == 1 && roundCount > 1){
         squareSpeed++;
       }
-    }
 
+      if ((roundCount - 1) % 15 == 0 && roundCount > 1){
+        intOldX = previousX.get(roundCount - 1);
+        intOldY = previousY.get(roundCount - 1);
+        intOldWidth = previousWidth.get(roundCount - 1);
+
+        previousX.clear();
+        previousY.clear();
+        previousWidth.clear();
+
+        previousX.add(intOldX);
+        previousY.add(height - intSquareHeight);
+        previousWidth.add(intOldWidth);
+        roundCount = 1;
+      }
+    }
   }
 
   /**
