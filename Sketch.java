@@ -29,9 +29,16 @@ public class Sketch extends PApplet {
   ArrayList<Float> RBGRed = new ArrayList<Float>();
   ArrayList<Float> RBGBlue = new ArrayList<Float>();
   ArrayList<Float> RBGGreen = new ArrayList<Float>();
-  int intColourChange = 10;
+
+  int intColourChange = 15;
   float fltMaxColour = 255;
   float fltMinColour = 0;
+  float intOldR;
+  float intOldG;
+  float intOldB;
+  float intNewR;
+  float intNewG;
+  float intNewB;
 
   /**
    * Called once at the beginning of execution, put your size all in this method
@@ -51,9 +58,9 @@ public class Sketch extends PApplet {
     previousWidth.add(beginningWidth);
     movingX.add(beginningX);
 
-    RBGRed.add(random(100, 240));
-    RBGBlue.add(random(100, 240));
-    RBGGreen.add(random(100, 240));
+    RBGRed.add(random(100, 230));
+    RBGBlue.add(random(100, 230));
+    RBGGreen.add(random(100, 230));
     RBGRed.add(RBGRed.get(0) + intColourChange);
     RBGBlue.add(RBGBlue.get(0));
     RBGGreen.add(RBGGreen.get(0));
@@ -98,14 +105,14 @@ public class Sketch extends PApplet {
   public void mousePressed() {
     mouseClicked = true;
     // If clicked to the right of base
-    if (movingX.get(roundCount - 1) > previousX.get(roundCount - 1) && movingX.get(roundCount - 1) < previousX.get(roundCount - 1) + previousWidth.get(roundCount - 1)){
+    if (movingX.get(roundCount - 1) >= previousX.get(roundCount - 1) && movingX.get(roundCount - 1) <= previousX.get(roundCount - 1) + previousWidth.get(roundCount - 1)){
       previousX.add(movingX.get(roundCount - 1));
       previousWidth.add(previousWidth.get(roundCount - 1) - movingX.get(roundCount - 1) + previousX.get(roundCount - 1));
       previousY.add(previousY.get(roundCount - 1) - blockHeight);
       intScore++;
     }
     // If clicked to the left of base
-    else if (movingX.get(roundCount - 1) < previousX.get(roundCount - 1) && movingX.get(roundCount - 1) + previousWidth.get(roundCount - 1) > previousX.get(roundCount - 1)){
+    else if (movingX.get(roundCount - 1) <= previousX.get(roundCount - 1) && movingX.get(roundCount - 1) + previousWidth.get(roundCount - 1) >= previousX.get(roundCount - 1)){
       previousX.add(previousX.get(roundCount - 1));
       previousWidth.add(previousWidth.get(roundCount - 1) + movingX.get(roundCount - 1) - previousX.get(roundCount - 1));
       previousY.add(previousY.get(roundCount - 1) - blockHeight);
@@ -134,9 +141,11 @@ public class Sketch extends PApplet {
         RBGRed.remove(roundCount);
         RBGRed.add(fltMaxColour);
         RBGBlue.add(RBGBlue.get(roundCount - 1) + intColourChange);
+        RBGGreen.add(RBGGreen.get(roundCount - 1));
         if (RBGBlue.get(roundCount) >= 255){
           RBGBlue.remove(roundCount);
           RBGBlue.add(fltMaxColour);
+          RBGGreen.remove(roundCount);
           RBGGreen.add(RBGGreen.get(roundCount - 1) + intColourChange);
           if (RBGGreen.get(roundCount) >= 255){
             RBGGreen.remove(roundCount);
@@ -183,14 +192,29 @@ public class Sketch extends PApplet {
         intOldX = previousX.get(roundCount - 1);
         intOldY = previousY.get(roundCount - 1);
         intOldWidth = previousWidth.get(roundCount - 1);
+        intOldR = RBGRed.get(roundCount - 1);
+        intOldG = RBGGreen.get(roundCount - 1);
+        intOldB = RBGBlue.get(roundCount - 1);
+        intNewR = RBGRed.get(roundCount);
+        intNewG = RBGGreen.get(roundCount);
+        intNewB = RBGBlue.get(roundCount);
 
         previousX.clear();
         previousY.clear();
         previousWidth.clear();
+        RBGRed.clear();
+        RBGBlue.clear();
+        RBGGreen.clear();
 
         previousX.add(intOldX);
         previousY.add(height - blockHeight);
         previousWidth.add(intOldWidth);
+        RBGRed.add(intOldR);
+        RBGBlue.add(intOldG);
+        RBGGreen.add(intOldB);
+        RBGRed.add(intNewR);
+        RBGBlue.add(intNewG);
+        RBGGreen.add(intNewB);
         roundCount = 1;
       }
     }
