@@ -20,19 +20,20 @@ public class Sketch extends PApplet {
 
   boolean playerAlive = true;
   boolean mouseClicked = false;
+  boolean RGBMaxed = false;
 
   ArrayList<Float> movingX = new ArrayList<Float>();
   ArrayList<Float> previousWidth = new ArrayList<Float>();
   ArrayList<Float> previousX = new ArrayList<Float>();
   ArrayList<Float> previousY = new ArrayList<Float>();
 
-  ArrayList<Float> RBGRed = new ArrayList<Float>();
-  ArrayList<Float> RBGBlue = new ArrayList<Float>();
-  ArrayList<Float> RBGGreen = new ArrayList<Float>();
+  ArrayList<Float> RGBRed = new ArrayList<Float>();
+  ArrayList<Float> RGBGreen = new ArrayList<Float>();
+  ArrayList<Float> RGBBlue = new ArrayList<Float>();
 
   int intColourChange = 15;
   float fltMaxColour = 255;
-  float fltMinColour = 0;
+  float fltMinColour = 100;
 
   float intOldR;
   float intOldG;
@@ -59,12 +60,12 @@ public class Sketch extends PApplet {
     previousWidth.add(beginningWidth);
     movingX.add(beginningX);
 
-    RBGRed.add(random(100, 230));
-    RBGBlue.add(random(100, 230));
-    RBGGreen.add(random(100, 230));
-    RBGRed.add(RBGRed.get(0) + intColourChange);
-    RBGBlue.add(RBGBlue.get(0));
-    RBGGreen.add(RBGGreen.get(0));
+    RGBRed.add(random(fltMinColour, fltMaxColour - 30));
+    RGBBlue.add(random(fltMinColour, fltMaxColour - 30));
+    RGBGreen.add(random(fltMinColour, fltMaxColour - 30));
+    RGBRed.add(RGBRed.get(0) + intColourChange);
+    RGBBlue.add(RGBBlue.get(0));
+    RGBGreen.add(RGBGreen.get(0));
   }
 
   /**
@@ -80,11 +81,11 @@ public class Sketch extends PApplet {
       text("Score: " + intScore, 15, 30); 
 
       for (int i = 0; i < roundCount; i++) {
-        fill(RBGRed.get(i), RBGBlue.get(i), RBGGreen.get(i));
+        fill(RGBRed.get(i), RGBBlue.get(i), RGBGreen.get(i));
         rect (previousX.get(i), previousY.get(i), previousWidth.get(i), blockHeight);
       }
       
-      fill(RBGRed.get(roundCount), RBGBlue.get(roundCount), RBGGreen.get(roundCount));
+      fill(RGBRed.get(roundCount), RGBBlue.get(roundCount), RGBGreen.get(roundCount));
       rect (movingX.get(roundCount - 1), previousY.get(roundCount - 1) - blockHeight, previousWidth.get(roundCount - 1), blockHeight);
       movingX.set(roundCount - 1, movingX.get(roundCount - 1) + blockSpeed);
       
@@ -94,7 +95,6 @@ public class Sketch extends PApplet {
       else if (movingX.get(roundCount - 1) <= 0) {
         blockSpeed = -blockSpeed;
       }
-
     }
   }
   
@@ -136,49 +136,57 @@ public class Sketch extends PApplet {
       if (blockSpeed < 0){
         blockSpeed = -blockSpeed;
       }
-
-      RBGRed.add(RBGRed.get(roundCount - 1) + intColourChange);
-      if (RBGRed.get(roundCount) >= 255){
-        RBGRed.remove(roundCount);
-        RBGRed.add(fltMaxColour);
-        RBGBlue.add(RBGBlue.get(roundCount - 1) + intColourChange);
-        RBGGreen.add(RBGGreen.get(roundCount - 1));
-        if (RBGBlue.get(roundCount) >= 255){
-          RBGBlue.remove(roundCount);
-          RBGBlue.add(fltMaxColour);
-          RBGGreen.remove(roundCount);
-          RBGGreen.add(RBGGreen.get(roundCount - 1) + intColourChange);
-          if (RBGGreen.get(roundCount) >= 255){
-            RBGGreen.remove(roundCount);
-            RBGGreen.add(fltMaxColour);
-            RBGRed.remove(roundCount);
-            RBGRed.add(RBGGreen.get(roundCount - 1) - intColourChange);
+      
+      if (RGBMaxed == false) {
+        RGBRed.add(RGBRed.get(roundCount - 1) + intColourChange);
+        if (RGBRed.get(roundCount) >= 255){
+          RGBRed.remove(roundCount);
+          RGBRed.add(fltMaxColour);
+          RGBBlue.add(RGBBlue.get(roundCount - 1) + intColourChange);
+          RGBGreen.add(RGBGreen.get(roundCount - 1));
+          if (RGBBlue.get(roundCount) >= 255){
+            RGBBlue.remove(roundCount);
+            RGBBlue.add(fltMaxColour);
+            RGBGreen.remove(roundCount);
+            RGBGreen.add(RGBGreen.get(roundCount - 1) + intColourChange);
+            if (RGBGreen.get(roundCount) >= 255){
+              RGBGreen.remove(roundCount);
+              RGBGreen.add(fltMaxColour);
+              RGBMaxed = true;
+            }
           }
         }
-      }
-      else {
-        RBGBlue.add(RBGBlue.get(roundCount - 1));
-        RBGGreen.add(RBGGreen.get(roundCount - 1));
-      }
-
-      if (RBGRed.get(roundCount) <= 0){
-        RBGRed.remove(roundCount);
-        RBGRed.add(fltMinColour);
-        RBGBlue.add(RBGBlue.get(roundCount - 1) - intColourChange);
-        if (RBGBlue.get(roundCount) <= 0){
-          RBGBlue.remove(roundCount);
-          RBGBlue.add(fltMinColour);
-          RBGGreen.add(RBGGreen.get(roundCount - 1) - intColourChange);
-          if (RBGGreen.get(roundCount) <= 0){
-            RBGGreen.remove(roundCount);
-            RBGBlue.remove(roundCount);
-            RBGRed.remove(roundCount);
-            RBGRed.add(random(100, 230));
-            RBGBlue.add(random(100, 230));
-            RBGGreen.add(random(100, 230));
-          }
+        else {
+          RGBBlue.add(RGBBlue.get(roundCount - 1));
+          RGBGreen.add(RGBGreen.get(roundCount - 1));
         }
       }
+      else if (RGBMaxed == false) {
+        RGBRed.add(RGBRed.get(roundCount - 1) - intColourChange);
+        if (RGBRed.get(roundCount) <= 100){
+          RGBRed.remove(roundCount);
+          RGBRed.add(fltMinColour);
+          RGBBlue.add(RGBBlue.get(roundCount - 1) - intColourChange);
+          if (RGBBlue.get(roundCount) <= 100){
+            RGBBlue.remove(roundCount);
+            RGBBlue.add(fltMinColour);
+            RGBGreen.add(RGBGreen.get(roundCount - 1) - intColourChange);
+            if (RGBGreen.get(roundCount) <= 100){
+              RGBGreen.remove(roundCount);
+              RGBBlue.remove(roundCount);
+              RGBRed.remove(roundCount);
+              RGBRed.add(random(100, 230));
+              RGBBlue.add(random(100, 230));
+              RGBGreen.add(random(100, 230));
+              RGBMaxed = false;
+            }
+          }
+        }
+        else {
+          RGBBlue.add(RGBBlue.get(roundCount - 1));
+          RGBGreen.add(RGBGreen.get(roundCount - 1));
+        }
+      } 
 
       roundCount++;
       if (roundCount % 2 == 1 && roundCount > 1){
@@ -194,29 +202,31 @@ public class Sketch extends PApplet {
         intOldX = previousX.get(roundCount - 1);
         intOldY = previousY.get(roundCount - 1);
         intOldWidth = previousWidth.get(roundCount - 1);
-        intOldR = RBGRed.get(roundCount - 1);
-        intOldG = RBGGreen.get(roundCount - 1);
-        intOldB = RBGBlue.get(roundCount - 1);
-        intNewR = RBGRed.get(roundCount);
-        intNewG = RBGGreen.get(roundCount);
-        intNewB = RBGBlue.get(roundCount);
+        intOldR = RGBRed.get(roundCount - 1);
+        intOldG = RGBGreen.get(roundCount - 1);
+        intOldB = RGBBlue.get(roundCount - 1);
+        intNewR = RGBRed.get(roundCount);
+        intNewG = RGBGreen.get(roundCount);
+        intNewB = RGBBlue.get(roundCount);
 
+        movingX.clear();
         previousX.clear();
         previousY.clear();
         previousWidth.clear();
-        RBGRed.clear();
-        RBGGreen.clear();
-        RBGBlue.clear();
+        RGBRed.clear();
+        RGBGreen.clear();
+        RGBBlue.clear();
         
+        movingX.add(beginningX);
         previousX.add(intOldX);
         previousY.add(height - blockHeight);
         previousWidth.add(intOldWidth);
-        RBGRed.add(intOldR);
-        RBGGreen.add(intOldG);
-        RBGBlue.add(intOldB);
-        RBGRed.add(intNewR);
-        RBGGreen.add(intNewG);
-        RBGBlue.add(intNewB);
+        RGBRed.add(intOldR);
+        RGBGreen.add(intOldG);
+        RGBBlue.add(intOldB);
+        RGBRed.add(intNewR);
+        RGBGreen.add(intNewG);
+        RGBBlue.add(intNewB);
         roundCount = 1;
       }
     }
