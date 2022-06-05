@@ -33,6 +33,7 @@ public class Sketch extends PApplet {
   int intColourChange = 15;
   float fltMaxColour = 255;
   float fltMinColour = 0;
+
   float intOldR;
   float intOldG;
   float intOldB;
@@ -152,30 +153,31 @@ public class Sketch extends PApplet {
             RBGGreen.add(fltMaxColour);
             RBGRed.remove(roundCount);
             RBGRed.add(RBGGreen.get(roundCount - 1) - intColourChange);
-            if (RBGRed.get(roundCount) <= 0){
-              RBGRed.remove(roundCount);
-              RBGRed.add(fltMinColour);
-              RBGBlue.add(RBGBlue.get(roundCount - 1) - intColourChange);
-              if (RBGBlue.get(roundCount) <= 0){
-                RBGBlue.remove(roundCount);
-                RBGBlue.add(fltMinColour);
-                RBGGreen.add(RBGGreen.get(roundCount - 1) - intColourChange);
-                if (RBGGreen.get(roundCount) <= 0){
-                  RBGGreen.remove(roundCount);
-                  RBGBlue.remove(roundCount);
-                  RBGRed.remove(roundCount);
-                  RBGRed.add(random(100, 240));
-                  RBGBlue.add(random(100, 240));
-                  RBGGreen.add(random(100, 240));
-                }
-              }
-            }
           }
         }
       }
       else {
         RBGBlue.add(RBGBlue.get(roundCount - 1));
         RBGGreen.add(RBGGreen.get(roundCount - 1));
+      }
+
+      if (RBGRed.get(roundCount) <= 0){
+        RBGRed.remove(roundCount);
+        RBGRed.add(fltMinColour);
+        RBGBlue.add(RBGBlue.get(roundCount - 1) - intColourChange);
+        if (RBGBlue.get(roundCount) <= 0){
+          RBGBlue.remove(roundCount);
+          RBGBlue.add(fltMinColour);
+          RBGGreen.add(RBGGreen.get(roundCount - 1) - intColourChange);
+          if (RBGGreen.get(roundCount) <= 0){
+            RBGGreen.remove(roundCount);
+            RBGBlue.remove(roundCount);
+            RBGRed.remove(roundCount);
+            RBGRed.add(random(100, 230));
+            RBGBlue.add(random(100, 230));
+            RBGGreen.add(random(100, 230));
+          }
+        }
       }
 
       roundCount++;
@@ -203,18 +205,18 @@ public class Sketch extends PApplet {
         previousY.clear();
         previousWidth.clear();
         RBGRed.clear();
-        RBGBlue.clear();
         RBGGreen.clear();
-
+        RBGBlue.clear();
+        
         previousX.add(intOldX);
         previousY.add(height - blockHeight);
         previousWidth.add(intOldWidth);
         RBGRed.add(intOldR);
-        RBGBlue.add(intOldG);
-        RBGGreen.add(intOldB);
+        RBGGreen.add(intOldG);
+        RBGBlue.add(intOldB);
         RBGRed.add(intNewR);
-        RBGBlue.add(intNewG);
-        RBGGreen.add(intNewB);
+        RBGGreen.add(intNewG);
+        RBGBlue.add(intNewB);
         roundCount = 1;
       }
     }
