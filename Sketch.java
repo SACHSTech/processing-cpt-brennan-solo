@@ -14,6 +14,7 @@ public class Sketch extends PApplet {
   int roundCount = 1;
   int blockSpeed = 1;
   int intScore = 0;
+  int intBackground;
 
   float intOldX;
   float intOldY;
@@ -33,6 +34,7 @@ public class Sketch extends PApplet {
   ArrayList<Float> RGBGreen = new ArrayList<Float>();
   ArrayList<Float> RGBBlue = new ArrayList<Float>();
 
+
   int intColourChange = 15;
   float fltMaxColour = 255;
   float fltMinColour = 100;
@@ -45,6 +47,11 @@ public class Sketch extends PApplet {
   float intNewB;
 
   PImage imgStart;
+  PImage imgBackground1;
+  PImage imgBackground2;
+  PImage imgBackground3;
+  PImage imgBackground4;
+  PImage imgBackground5;
 
   /**
    * Called once at the beginning of execution, put your size all in this method
@@ -61,6 +68,17 @@ public class Sketch extends PApplet {
   public void setup() {
     imgStart = loadImage("start.png");
     imgStart.resize(width, height);
+    imgBackground1 = loadImage("background1.png");
+    imgBackground1.resize(width, height);
+    imgBackground2 = loadImage("background2.png");
+    imgBackground2.resize(width, height);
+    imgBackground3 = loadImage("background3.png");
+    imgBackground3.resize(width, height);
+    imgBackground4 = loadImage("background4.png");
+    imgBackground4.resize(width, height);
+    imgBackground5 = loadImage("background5.png");
+    imgBackground5.resize(width, height);
+
     
     previousX.add((width - beginningWidth) / 2);
     previousY.add(height - blockHeight);
@@ -93,8 +111,8 @@ public class Sketch extends PApplet {
     if (gameStarted == true) {
       if (playerAlive == true) {
         background(0);
-        stroke(0);
 
+        stroke(0);
         textSize(25);
         fill(255, 0, 0);
         text("Score: " + intScore, 15, 30); 
