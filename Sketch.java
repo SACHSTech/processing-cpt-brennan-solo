@@ -34,7 +34,6 @@ public class Sketch extends PApplet {
   ArrayList<Float> RGBGreen = new ArrayList<Float>();
   ArrayList<Float> RGBBlue = new ArrayList<Float>();
 
-
   int intColourChange = 15;
   float fltMaxColour = 255;
   float fltMinColour = 100;
@@ -52,6 +51,7 @@ public class Sketch extends PApplet {
   PImage imgBackground3;
   PImage imgBackground4;
   PImage imgBackground5;
+  ArrayList<PImage> Backgrounds = new ArrayList<PImage>();
 
   /**
    * Called once at the beginning of execution, put your size all in this method
@@ -79,7 +79,13 @@ public class Sketch extends PApplet {
     imgBackground5 = loadImage("background5.png");
     imgBackground5.resize(width, height);
 
-    
+    Backgrounds.add(imgBackground1);
+    Backgrounds.add(imgBackground2);
+    Backgrounds.add(imgBackground3);
+    Backgrounds.add(imgBackground4);
+    Backgrounds.add(imgBackground5);
+    intBackground = (int) random(0,5);
+
     previousX.add((width - beginningWidth) / 2);
     previousY.add(height - blockHeight);
     previousWidth.add(beginningWidth);
@@ -91,6 +97,8 @@ public class Sketch extends PApplet {
     RGBRed.add(RGBRed.get(0) + intColourChange);
     RGBBlue.add(RGBBlue.get(0));
     RGBGreen.add(RGBGreen.get(0));
+
+
   }
 
   /**
@@ -110,20 +118,15 @@ public class Sketch extends PApplet {
 
     if (gameStarted == true) {
       if (playerAlive == true) {
-        background(0);
+        image (Backgrounds.get(intBackground), 0, 0);
 
         stroke(0);
         textSize(25);
         fill(255, 0, 0);
         text("Score: " + intScore, 15, 30); 
 
-        for (int i = 0; i < roundCount; i++) {
-          fill(RGBRed.get(i), RGBBlue.get(i), RGBGreen.get(i));
-          rect (previousX.get(i), previousY.get(i), previousWidth.get(i), blockHeight);
-        }
-        
-        fill(RGBRed.get(roundCount), RGBBlue.get(roundCount), RGBGreen.get(roundCount));
-        rect (movingX.get(roundCount - 1), previousY.get(roundCount - 1) - blockHeight, previousWidth.get(roundCount - 1), blockHeight);
+        drawPrevious();
+
         movingX.set(roundCount - 1, movingX.get(roundCount - 1) + blockSpeed);
         
         if (movingX.get(roundCount - 1) >= (width - previousWidth.get(roundCount - 1))) {
@@ -135,15 +138,9 @@ public class Sketch extends PApplet {
       }
 
       else if (playerAlive == false) { 
-        background(0);
+        image (Backgrounds.get(intBackground), 0, 0);
 
-        for (int i = 0; i < roundCount; i++) {
-          fill(RGBRed.get(i), RGBBlue.get(i), RGBGreen.get(i));
-          rect (previousX.get(i), previousY.get(i), previousWidth.get(i), blockHeight);
-        }
-
-        fill(RGBRed.get(roundCount), RGBBlue.get(roundCount), RGBGreen.get(roundCount));
-        rect (movingX.get(roundCount - 1), previousY.get(roundCount - 1) - blockHeight, previousWidth.get(roundCount - 1), blockHeight);
+        drawPrevious();
 
         stroke(255, 255, 255);
         fill (0);
@@ -288,13 +285,7 @@ public class Sketch extends PApplet {
           intNewG = RGBGreen.get(roundCount);
           intNewB = RGBBlue.get(roundCount);
 
-          movingX.clear();
-          previousX.clear();
-          previousY.clear();
-          previousWidth.clear();
-          RGBRed.clear();
-          RGBGreen.clear();
-          RGBBlue.clear();
+          clearArrayLists();
           
           movingX.add(beginningX);
           previousX.add(intOldX);
@@ -316,13 +307,7 @@ public class Sketch extends PApplet {
           blockSpeed = 1;
           intScore = 0;
 
-          previousX.clear();
-          previousY.clear();
-          previousWidth.clear();
-          movingX.clear();
-          RGBRed.clear();
-          RGBGreen.clear();
-          RGBBlue.clear();
+          clearArrayLists();
         
           previousX.add((width - beginningWidth) / 2);
           previousY.add(height - blockHeight);
@@ -337,6 +322,7 @@ public class Sketch extends PApplet {
           RGBGreen.add(RGBGreen.get(0));
 
           playerAlive = true;
+          intBackground = (int) random(0,5);
         }
       }
     } 
@@ -353,5 +339,32 @@ public class Sketch extends PApplet {
    */
   public void mouseReleased() {
     mouseClicked = false;
+  }
+
+  /**
+   * F
+   */
+  public void drawPrevious(){
+    for (int i = 0; i < roundCount; i++) {
+      fill(RGBRed.get(i), RGBBlue.get(i), RGBGreen.get(i));
+      rect (previousX.get(i), previousY.get(i), previousWidth.get(i), blockHeight);
+    }
+
+    fill(RGBRed.get(roundCount), RGBBlue.get(roundCount), RGBGreen.get(roundCount));
+    rect (movingX.get(roundCount - 1), previousY.get(roundCount - 1) - blockHeight, previousWidth.get(roundCount - 1), blockHeight);
+
+  }
+
+  /**
+   * F
+   */
+  public void clearArrayLists(){
+    previousX.clear();
+    previousY.clear();
+    previousWidth.clear();
+    movingX.clear();
+    RGBRed.clear();
+    RGBGreen.clear();
+    RGBBlue.clear();
   }
 }
