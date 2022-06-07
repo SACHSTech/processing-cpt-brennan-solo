@@ -21,7 +21,6 @@ public class Sketch extends PApplet {
   float intOldWidth;
 
   boolean playerAlive = true;
-  boolean mouseClicked = false;
   boolean RGBMaxed = false;
   boolean gameStarted = false;
 
@@ -86,18 +85,7 @@ public class Sketch extends PApplet {
     Backgrounds.add(imgBackground5);
     intBackground = (int) random(0,5);
 
-    previousX.add((width - beginningWidth) / 2);
-    previousY.add(height - blockHeight);
-    previousWidth.add(beginningWidth);
-    movingX.add(beginningX);
-
-    RGBRed.add(random(fltMinColour, fltMaxColour - (intColourChange * 2)));
-    RGBBlue.add(random(fltMinColour, fltMaxColour - (intColourChange * 2)));
-    RGBGreen.add(random(fltMinColour, fltMaxColour - (intColourChange * 2)));
-    RGBRed.add(RGBRed.get(0) + intColourChange);
-    RGBBlue.add(RGBBlue.get(0));
-    RGBGreen.add(RGBGreen.get(0));
-
+    beginningVariables();
 
   }
 
@@ -146,26 +134,27 @@ public class Sketch extends PApplet {
         fill (0);
         rect ((width - 300) / 2, (height - 200) / 2, 300, 200);
 
-        rect (150, 285, 200, 40);
-
         textSize(30);
         fill(255, 255, 255);
         text("GAME OVER!", 155, 200); 
 
         if (intScore < 10) {
           textSize(35);
-          text("Score: " + intScore, 180, 260); 
+          text("Score: " + intScore, 180, 250); 
         }
         else if (intScore >= 10){
           textSize(35);
-          text("Score: " + intScore, 172, 260); 
+          text("Score: " + intScore, 172, 250); 
         }
 
         fill (0);
-        rect (150, 285, 200, 40);
+        rect (260, 275, 120, 60);
+        rect (120, 275, 120, 60);
+
         textSize(20);
         fill (255, 255, 255);
-        text("Play Again", 205, 310); 
+        text("Play Again", 275, 310); 
+        text("Title Screen", 127, 310); 
 
         stroke(0);
       }
@@ -177,9 +166,7 @@ public class Sketch extends PApplet {
   /**
    * Sets mouseClicked boolean to true 
    */
-  public void mousePressed() {
-    mouseClicked = true;
-    
+  public void mousePressed() {    
     if (gameStarted == true) {
       // If clicked to the right of base
       if (movingX.get(roundCount - 1) >= previousX.get(roundCount - 1) && movingX.get(roundCount - 1) <= previousX.get(roundCount - 1) + previousWidth.get(roundCount - 1)){
@@ -207,7 +194,7 @@ public class Sketch extends PApplet {
           playerAlive = false;
       }
 
-      if (playerAlive == true && gameStarted == true){
+      if (playerAlive == true){
         
         if (blockSpeed < 0){
           blockSpeed = -blockSpeed;
@@ -301,44 +288,40 @@ public class Sketch extends PApplet {
         }
       }
 
-      if (playerAlive == false && gameStarted == true) {
-        if (mouseClicked == true && mouseX >= 150 && mouseX <= 150 + 200 && mouseY >= 285 && mouseY <= 285 + 40){
+      if (playerAlive == false) {
+        if (mouseX >= 260 && mouseX <= 260 + 120 && mouseY >= 275 && mouseY <= 275 + 60){
           roundCount = 1;
           blockSpeed = 1;
           intScore = 0;
 
           clearArrayLists();
         
-          previousX.add((width - beginningWidth) / 2);
-          previousY.add(height - blockHeight);
-          previousWidth.add(beginningWidth);
-          movingX.add(beginningX);
-
-          RGBRed.add(random(fltMinColour, fltMaxColour - (intColourChange * 2)));
-          RGBBlue.add(random(fltMinColour, fltMaxColour - (intColourChange * 2)));
-          RGBGreen.add(random(fltMinColour, fltMaxColour - (intColourChange * 2)));
-          RGBRed.add(RGBRed.get(0) + intColourChange);
-          RGBBlue.add(RGBBlue.get(0));
-          RGBGreen.add(RGBGreen.get(0));
+          beginningVariables();
 
           playerAlive = true;
           intBackground = (int) random(0,5);
+        }
+        else if (mouseX >= 120 && mouseX <= 120 + 120 && mouseY >= 275 && mouseY <= 275 + 60) {
+          roundCount = 1;
+          blockSpeed = 1;
+          intScore = 0;
+
+          clearArrayLists();
+        
+          beginningVariables();
+
+          playerAlive = true;
+          intBackground = (int) random(0,5);
+          gameStarted = false;
         }
       }
     } 
     
     if (gameStarted == false) {
-      if (mouseClicked == true && mouseX >= 90 && mouseX <= 90 + 315 && mouseY >= 205 && mouseY <= 205 + 70){
+      if (mouseX >= 90 && mouseX <= 90 + 315 && mouseY >= 205 && mouseY <= 205 + 70){
         gameStarted = true;
       }
     }  
-  }
-
-  /**
-   * Sets mouseClicked boolean to false
-   */
-  public void mouseReleased() {
-    mouseClicked = false;
   }
 
   /**
@@ -352,7 +335,6 @@ public class Sketch extends PApplet {
 
     fill(RGBRed.get(roundCount), RGBBlue.get(roundCount), RGBGreen.get(roundCount));
     rect (movingX.get(roundCount - 1), previousY.get(roundCount - 1) - blockHeight, previousWidth.get(roundCount - 1), blockHeight);
-
   }
 
   /**
@@ -366,5 +348,22 @@ public class Sketch extends PApplet {
     RGBRed.clear();
     RGBGreen.clear();
     RGBBlue.clear();
+  }
+
+  /**
+   * F
+   */
+  public void beginningVariables(){
+    previousX.add((width - beginningWidth) / 2);
+    previousY.add(height - blockHeight);
+    previousWidth.add(beginningWidth);
+    movingX.add(beginningX);
+
+    RGBRed.add(random(fltMinColour, fltMaxColour - (intColourChange * 2)));
+    RGBBlue.add(random(fltMinColour, fltMaxColour - (intColourChange * 2)));
+    RGBGreen.add(random(fltMinColour, fltMaxColour - (intColourChange * 2)));
+    RGBRed.add(RGBRed.get(0) + intColourChange);
+    RGBBlue.add(RGBBlue.get(0));
+    RGBGreen.add(RGBGreen.get(0));
   }
 }
