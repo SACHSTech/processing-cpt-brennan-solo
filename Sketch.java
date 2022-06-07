@@ -164,7 +164,7 @@ public class Sketch extends PApplet {
   // define other methods down here.
   
   /**
-   * Sets mouseClicked boolean to true 
+   * F
    */
   public void mousePressed() {    
     if (gameStarted == true) {
@@ -285,6 +285,8 @@ public class Sketch extends PApplet {
           RGBGreen.add(intNewG);
           RGBBlue.add(intNewB);
           roundCount = 1;
+
+          intBackground = (int) random(0,5);
         }
       }
 
