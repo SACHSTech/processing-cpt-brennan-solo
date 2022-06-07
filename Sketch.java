@@ -23,6 +23,9 @@ public class Sketch extends PApplet {
   boolean playerAlive = true;
   boolean RGBMaxed = false;
   boolean gameStarted = false;
+  boolean modeSelection = false;
+  boolean easyMode = false;
+  boolean hardMode = false;
 
   ArrayList<Float> movingX = new ArrayList<Float>();
   ArrayList<Float> previousWidth = new ArrayList<Float>();
@@ -102,6 +105,31 @@ public class Sketch extends PApplet {
 
       textSize(20);
       text("Created by: Brennan Chan", 125, 370); 
+
+      if (modeSelection == true) {
+        stroke(255, 255, 255);
+        fill (0);
+        rect ((width - 300) / 2, 300, 300, 190);
+
+        textSize(30);
+        fill(255, 255, 255);
+        text("SELECT MODE:", 140, 350); 
+
+        fill (0, 255, 0);
+        rect (120, 390, 70, 70);
+
+        fill (230, 224, 71);
+        rect (215, 390, 70, 70);
+
+        fill (255, 0, 0);
+        rect (310, 390, 70, 70);
+
+        textSize(15);
+        fill(0);
+        text("Easy", 139, 430); 
+        text("Normal", 225, 430); 
+        text("Hard", 329, 430); 
+      }
     }
 
     if (gameStarted == true) {
@@ -148,8 +176,8 @@ public class Sketch extends PApplet {
         }
 
         fill (0);
-        rect (260, 275, 120, 60);
-        rect (120, 275, 120, 60);
+        rect (260, 280, 120, 50);
+        rect (120, 280, 120, 50);
 
         textSize(20);
         fill (255, 255, 255);
@@ -252,12 +280,26 @@ public class Sketch extends PApplet {
         } 
 
         roundCount++;
-        if (roundCount % 2 == 1 && roundCount > 1){
-          blockSpeed++;
-          movingX.add(width - previousWidth.get(roundCount - 1) - 1);
+        if (easyMode == true) {
+          if (roundCount % 4 == 1 && roundCount > 1){
+            blockSpeed++;
+          }
+          
+          alternateStart();
         }
-        else if (roundCount > 1) {
-          movingX.add(beginningX);
+        else if (hardMode == true) {
+          if (roundCount > 1){
+            blockSpeed++;
+          }
+        
+          alternateStart();
+        }
+        else {
+          if (roundCount % 2 == 1 && roundCount > 1){
+            blockSpeed++;
+          }
+          
+          alternateStart();
         }
 
         // Move the game back down to the bottom of the screen every 15 rounds
@@ -291,7 +333,7 @@ public class Sketch extends PApplet {
       }
 
       if (playerAlive == false) {
-        if (mouseX >= 260 && mouseX <= 260 + 120 && mouseY >= 275 && mouseY <= 275 + 60){
+        if (mouseX >= 260 && mouseX <= 260 + 120 && mouseY >= 280 && mouseY <= 280 + 50){
           roundCount = 1;
           blockSpeed = 1;
           intScore = 0;
@@ -303,7 +345,7 @@ public class Sketch extends PApplet {
           playerAlive = true;
           intBackground = (int) random(0,5);
         }
-        else if (mouseX >= 120 && mouseX <= 120 + 120 && mouseY >= 275 && mouseY <= 275 + 60) {
+        else if (mouseX >= 120 && mouseX <= 120 + 120 && mouseY >= 280 && mouseY <= 280 + 50) {
           roundCount = 1;
           blockSpeed = 1;
           intScore = 0;
@@ -315,15 +357,39 @@ public class Sketch extends PApplet {
           playerAlive = true;
           intBackground = (int) random(0,5);
           gameStarted = false;
+          easyMode = false;
+          hardMode = false;
         }
       }
     } 
     
     if (gameStarted == false) {
       if (mouseX >= 90 && mouseX <= 90 + 315 && mouseY >= 205 && mouseY <= 205 + 70){
-        gameStarted = true;
+        if (modeSelection == false) {
+          modeSelection = true;
+        }
+        else {
+          modeSelection = false;
+        }
       }
-    }  
+    }
+    
+    if (modeSelection == true) {
+      if (mouseX >= 120 && mouseX <= 120 + 70 && mouseY >= 390 && mouseY <= 390 + 70){
+        easyMode = true;
+        gameStarted = true;
+        modeSelection = false;
+      }
+      if (mouseX >= 215 && mouseX <= 215 + 70 && mouseY >= 390 && mouseY <= 390 + 70){
+        gameStarted = true;
+        modeSelection = false;
+      }
+      if (mouseX >= 310 && mouseX <= 310 + 70 && mouseY >= 390 && mouseY <= 390 + 70){
+        hardMode = true;
+        gameStarted = true;
+        modeSelection = false;
+      }
+    }
   }
 
   /**
@@ -368,4 +434,17 @@ public class Sketch extends PApplet {
     RGBBlue.add(RGBBlue.get(0));
     RGBGreen.add(RGBGreen.get(0));
   }
+
+  /**
+   * F
+   */
+  public void alternateStart(){
+    if (roundCount % 2 == 1 && roundCount > 1){
+      movingX.add(width - previousWidth.get(roundCount - 1) - 1);
+    }
+    else if (roundCount > 1) {
+      movingX.add(beginningX);
+    }
+  }
+
 }
