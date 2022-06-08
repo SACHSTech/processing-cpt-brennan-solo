@@ -3,7 +3,7 @@ import processing.core.PImage;
 import java.util.*;
 
 /**
- * Description: 
+ * Description: 2D Stack game, where the player can click to stack blocks with the blocks getting progressively smaller and quicker, and the player can attempt to get a high score.
  * @author: B. Chan
  */
 
@@ -69,7 +69,7 @@ public class Sketch extends PApplet {
    * values here i.e background, stroke, fill etc.
    */
   public void setup() {
-    // Load backgrounds into variables, and the variables in an ArrayList
+    // Load backgrounds into variables, and the variables into an ArrayList
     imgStart = loadImage("start.png");
     imgStart.resize(width, height);
     imgBackground1 = loadImage("background1.png");
@@ -100,7 +100,7 @@ public class Sketch extends PApplet {
    * Called repeatedly, anything drawn to the screen goes here
    */
   public void draw() {
-    // Display title screen when the player has not started the game / stopped playing
+    // Display title screen when the player has not started the game or stopped playing
     if (gameStarted == false) {
       image (imgStart, 0, 0);
 
@@ -153,7 +153,7 @@ public class Sketch extends PApplet {
         // Blocks move according to the current round's blockSpeed
         movingX.set(roundCount - 1, movingX.get(roundCount - 1) + blockSpeed);
         
-        // Collision detection for the moving blocks
+        // Collision detection for the left and right edge of the screen for the moving blocks
         if (movingX.get(roundCount - 1) >= (width - previousWidth.get(roundCount - 1))) {
           blockSpeed = -blockSpeed;  
         } 
@@ -204,25 +204,25 @@ public class Sketch extends PApplet {
   // define other methods down here.
   
   /**
-   * When Mouse is pressed, the user can press start on the title screen and select the mode difficulty. When playing, the player can click to stack blocks, and click to return back to the title screen or click to play again after they lose. The player's clicks indicates a new round, which results in the block colour changing, and possibly the blockSpeed increasing, or the game moving down to the bottom with the background changing. 
+   * When Mouse is pressed, the user can press start on the title screen and select the mode difficulty. When playing, the player can click to stack blocks, and click to return back to the title screen or click to play again after they lose. The player's clicks indicate a new round, which results in the block colour changing, and possibly the blockSpeed increasing, or the game moving back down to the bottom with the background changing. 
    */
   public void mousePressed() {    
     if (gameStarted == true) {
-      // If the block is clicked when to the right of the previous
+      // If the Mouse is clicked when the current block is to the right of the previous
       if (movingX.get(roundCount - 1) >= previousX.get(roundCount - 1) && movingX.get(roundCount - 1) <= previousX.get(roundCount - 1) + previousWidth.get(roundCount - 1)){
         previousX.add(movingX.get(roundCount - 1));
         previousWidth.add(previousWidth.get(roundCount - 1) - movingX.get(roundCount - 1) + previousX.get(roundCount - 1));
         previousY.add(previousY.get(roundCount - 1) - blockHeight);
         intScore++;
       }
-      // If the block is clicked when to the left of the previous
+      // If the Mouse is clicked when the current block is to the left of the previous
       else if (movingX.get(roundCount - 1) <= previousX.get(roundCount - 1) && movingX.get(roundCount - 1) + previousWidth.get(roundCount - 1) >= previousX.get(roundCount - 1)){
         previousX.add(previousX.get(roundCount - 1));
         previousWidth.add(previousWidth.get(roundCount - 1) + movingX.get(roundCount - 1) - previousX.get(roundCount - 1));
         previousY.add(previousY.get(roundCount - 1) - blockHeight);
         intScore++;
       }
-      // If the block is clicked directly on the previous
+      // If the current block is clicked directly on the previous
       else if (movingX.get(roundCount - 1) == previousX.get(roundCount - 1)){
         previousX.add(movingX.get(roundCount - 1));
         previousWidth.add(previousWidth.get(roundCount - 1));
@@ -237,7 +237,7 @@ public class Sketch extends PApplet {
       // If the game is still continuing after the player successfully stacked the block
       if (playerAlive == true){
         
-        // Reset blockspeed to normal if it was heading from right to left
+        // Reset blockspeed to positive if it was heading from right to left
         if (blockSpeed < 0){
           blockSpeed = -blockSpeed;
         }
@@ -332,7 +332,7 @@ public class Sketch extends PApplet {
           alternateStart();
         }
 
-        // Move the game back down to the bottom of the screen every 15 rounds, continue from there
+        // Move the game back down to the bottom of the screen every 15 rounds, reset ArrayLists with the most recent numbers as first, and continue game from bottom
         if ((roundCount - 1) % 15 == 0 && roundCount > 1){
           intOldX = previousX.get(roundCount - 1);
           intOldY = previousY.get(roundCount - 1);
@@ -365,7 +365,7 @@ public class Sketch extends PApplet {
 
       // When the player ends the game, and the GAME OVER screen appears
       if (playerAlive == false) {
-        // If the player clicks the Play Again button, reset game with previous mode
+        // If the player clicks the Play Again button, reset game with previous mode still selected
         if (mouseX >= 260 && mouseX <= 260 + 120 && mouseY >= 280 && mouseY <= 280 + 50){
           roundCount = 1;
           blockSpeed = 1;
@@ -409,7 +409,7 @@ public class Sketch extends PApplet {
       }
     }
     
-    // After the mode selection panel appears, sets the mode variables according to the mode hitbox the player clicks on
+    // After the mode selection panel appears, sets the mode variables according to the hitbox the player clicks on
     if (modeSelection == true) {
       // If the player selects Easy mode
       if (mouseX >= 120 && mouseX <= 120 + 70 && mouseY >= 390 && mouseY <= 390 + 70){
@@ -422,7 +422,7 @@ public class Sketch extends PApplet {
         gameStarted = true;
         modeSelection = false;
       }
-      // If the player selects Easy mode
+      // If the player selects Hard mode
       if (mouseX >= 310 && mouseX <= 310 + 70 && mouseY >= 390 && mouseY <= 390 + 70){
         hardMode = true;
         gameStarted = true;
@@ -445,7 +445,7 @@ public class Sketch extends PApplet {
   }
 
   /**
-   * Clear all ArrayLists containing the previous game's information
+   * Clear all ArrayLists containing the previous game's information to reset the game, or to move the game back down to the bottom while playing
    */
   public void clearArrayLists(){
     previousX.clear();
@@ -458,7 +458,7 @@ public class Sketch extends PApplet {
   }
 
   /**
-   * The beginning variables that are set at the beginning of a new game which also reset the game when declared again
+   * The beginning variables that are set at the beginning of a new game which reset the game when declared again
    */
   public void beginningVariables(){
     previousX.add((width - beginningWidth) / 2);
@@ -475,7 +475,7 @@ public class Sketch extends PApplet {
   }
 
   /**
-   * Have the moving blocks alternate from starting from the left and starting from the right each time
+   * Have the moving blocks alternate from starting from the left and starting from the right each time when they appear
    */
   public void alternateStart(){
     if (roundCount % 2 == 1 && roundCount > 1){
