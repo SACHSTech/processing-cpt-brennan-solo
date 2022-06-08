@@ -8,6 +8,7 @@ import java.util.*;
  */
 
 public class Sketch extends PApplet {
+  // Declare global variables
   float blockHeight = 30;
   float beginningWidth = 300;
   float beginningX = 0;
@@ -68,6 +69,7 @@ public class Sketch extends PApplet {
    * values here i.e background, stroke, fill etc.
    */
   public void setup() {
+    // Load backgrounds into variables, and the variables in an ArrayList
     imgStart = loadImage("start.png");
     imgStart.resize(width, height);
     imgBackground1 = loadImage("background1.png");
@@ -86,6 +88,8 @@ public class Sketch extends PApplet {
     Backgrounds.add(imgBackground3);
     Backgrounds.add(imgBackground4);
     Backgrounds.add(imgBackground5);
+    
+    // Generate random background
     intBackground = (int) random(0,5);
 
     beginningVariables();
@@ -96,6 +100,7 @@ public class Sketch extends PApplet {
    * Called repeatedly, anything drawn to the screen goes here
    */
   public void draw() {
+    // Display title screen when the player has not started the game / stopped playing
     if (gameStarted == false) {
       image (imgStart, 0, 0);
 
@@ -106,6 +111,7 @@ public class Sketch extends PApplet {
       textSize(20);
       text("Created by: Brennan Chan", 125, 370); 
 
+      // Display mode selection panel after player presses start
       if (modeSelection == true) {
         stroke(255, 255, 255);
         fill (0);
@@ -132,6 +138,7 @@ public class Sketch extends PApplet {
       }
     }
 
+    // Start game after player selects mode
     if (gameStarted == true) {
       if (playerAlive == true) {
         image (Backgrounds.get(intBackground), 0, 0);
@@ -143,8 +150,10 @@ public class Sketch extends PApplet {
 
         drawPrevious();
 
+        // Blocks move according to the current round's blockSpeed
         movingX.set(roundCount - 1, movingX.get(roundCount - 1) + blockSpeed);
         
+        // Collision detection for the moving blocks
         if (movingX.get(roundCount - 1) >= (width - previousWidth.get(roundCount - 1))) {
           blockSpeed = -blockSpeed;  
         } 
@@ -153,11 +162,13 @@ public class Sketch extends PApplet {
         }
       }
 
+      // When the game ends after the player misses the previous block
       else if (playerAlive == false) { 
         image (Backgrounds.get(intBackground), 0, 0);
 
         drawPrevious();
 
+        // Display GAME OVER screen, with option to return to title screen or play again
         stroke(255, 255, 255);
         fill (0);
         rect ((width - 300) / 2, (height - 200) / 2, 300, 200);
@@ -165,15 +176,6 @@ public class Sketch extends PApplet {
         textSize(30);
         fill(255, 255, 255);
         text("GAME OVER!", 155, 200); 
-
-        if (intScore < 10) {
-          textSize(35);
-          text("Score: " + intScore, 180, 250); 
-        }
-        else if (intScore >= 10){
-          textSize(35);
-          text("Score: " + intScore, 172, 250); 
-        }
 
         fill (0);
         rect (260, 280, 120, 50);
@@ -184,6 +186,16 @@ public class Sketch extends PApplet {
         text("Play Again", 275, 310); 
         text("Title Screen", 127, 310); 
 
+        // Move Score display depending on if the score is double digits or single digits to center it properly
+        if (intScore < 10) {
+          textSize(35);
+          text("Score: " + intScore, 180, 250); 
+        }
+        else if (intScore >= 10){
+          textSize(35);
+          text("Score: " + intScore, 172, 250); 
+        }
+
         stroke(0);
       }
     }
@@ -192,54 +204,60 @@ public class Sketch extends PApplet {
   // define other methods down here.
   
   /**
-   * F
+   * When Mouse is pressed, the user can press start on the title screen and select the mode difficulty. When playing, the player can click to stack blocks, and click to return back to the title screen or click to play again after they lose. The player's clicks indicates a new round, which results in the block colour changing, and possibly the blockSpeed increasing, or the game moving down to the bottom with the background changing. 
    */
   public void mousePressed() {    
     if (gameStarted == true) {
-      // If clicked to the right of base
+      // If the block is clicked when to the right of the previous
       if (movingX.get(roundCount - 1) >= previousX.get(roundCount - 1) && movingX.get(roundCount - 1) <= previousX.get(roundCount - 1) + previousWidth.get(roundCount - 1)){
         previousX.add(movingX.get(roundCount - 1));
         previousWidth.add(previousWidth.get(roundCount - 1) - movingX.get(roundCount - 1) + previousX.get(roundCount - 1));
         previousY.add(previousY.get(roundCount - 1) - blockHeight);
         intScore++;
       }
-      // If clicked to the left of base
+      // If the block is clicked when to the left of the previous
       else if (movingX.get(roundCount - 1) <= previousX.get(roundCount - 1) && movingX.get(roundCount - 1) + previousWidth.get(roundCount - 1) >= previousX.get(roundCount - 1)){
         previousX.add(previousX.get(roundCount - 1));
         previousWidth.add(previousWidth.get(roundCount - 1) + movingX.get(roundCount - 1) - previousX.get(roundCount - 1));
         previousY.add(previousY.get(roundCount - 1) - blockHeight);
         intScore++;
       }
-      // If clicked directly on base
+      // If the block is clicked directly on the previous
       else if (movingX.get(roundCount - 1) == previousX.get(roundCount - 1)){
         previousX.add(movingX.get(roundCount - 1));
         previousWidth.add(previousWidth.get(roundCount - 1));
         previousY.add(previousY.get(roundCount - 1) - blockHeight);
         intScore++;
       }
-      // If block misses the previous block, end game
+      // If the block is clicked while not above the previous block at all, end game
       else {
           playerAlive = false;
       }
 
+      // If the game is still continuing after the player successfully stacked the block
       if (playerAlive == true){
         
+        // Reset blockspeed to normal if it was heading from right to left
         if (blockSpeed < 0){
           blockSpeed = -blockSpeed;
         }
         
         if (RGBMaxed == false) {
+          // Increase Red value by 10 each round
           RGBRed.add(RGBRed.get(roundCount - 1) + intColourChange);
+          // When Red value reaches maximum 255 value, keep it at 255 and begin adding 10 to the Blue value
           if (RGBRed.get(roundCount) >= 255){
             RGBRed.remove(roundCount);
             RGBRed.add(fltMaxColour);
             RGBBlue.add(RGBBlue.get(roundCount - 1) + intColourChange);
             RGBGreen.add(RGBGreen.get(roundCount - 1));
+            // When Blue value reaches maximum 255 value, keep it at 255 and begin adding 10 to the Green value
             if (RGBBlue.get(roundCount) >= 255){
               RGBBlue.remove(roundCount);
               RGBBlue.add(fltMaxColour);
               RGBGreen.remove(roundCount);
               RGBGreen.add(RGBGreen.get(roundCount - 1) + intColourChange);
+              // When Green value reaches maximum 255 value, set to 255 and set RBGMaxed to true
               if (RGBGreen.get(roundCount) >= 255){
                 RGBGreen.remove(roundCount);
                 RGBGreen.add(fltMaxColour);
@@ -247,21 +265,29 @@ public class Sketch extends PApplet {
               }
             }
           }
+          // If Red value has not reached 255 yet, keep Blue and Green the same
           else {
             RGBBlue.add(RGBBlue.get(roundCount - 1));
             RGBGreen.add(RGBGreen.get(roundCount - 1));
           }
         }
-        else if (RGBMaxed == false) {
+        // When Red, Green, and Blue colour values all reach the maximum 255
+        else if (RGBMaxed == true) {
+          // Subtract from the Red colour value
           RGBRed.add(RGBRed.get(roundCount - 1) - intColourChange);
+          // When the Red colour value is reduced down to 100, keep Red at 100 and begin subtracting from Blue value
           if (RGBRed.get(roundCount) <= 100){
             RGBRed.remove(roundCount);
             RGBRed.add(fltMinColour);
             RGBBlue.add(RGBBlue.get(roundCount - 1) - intColourChange);
+            RGBGreen.add(RGBGreen.get(roundCount - 1));
+            // When the Blue colour value is reduced down to 100, keep Blue at 100 and begin subtracting from Green value
             if (RGBBlue.get(roundCount) <= 100){
               RGBBlue.remove(roundCount);
               RGBBlue.add(fltMinColour);
+              RGBGreen.remove(roundCount);
               RGBGreen.add(RGBGreen.get(roundCount - 1) - intColourChange);
+              // When the Green colour value is reduced down to 100, restart the cycle by generating new values for Red, Blue, and Green and start adding to them again
               if (RGBGreen.get(roundCount) <= 100){
                 RGBGreen.remove(roundCount);
                 RGBBlue.remove(roundCount);
@@ -273,6 +299,7 @@ public class Sketch extends PApplet {
               }
             }
           }
+          // If Red value has not been reduced to 100 yet, keep Blue and Green the same
           else {
             RGBBlue.add(RGBBlue.get(roundCount - 1));
             RGBGreen.add(RGBGreen.get(roundCount - 1));
@@ -280,6 +307,7 @@ public class Sketch extends PApplet {
         } 
 
         roundCount++;
+        // If Easy mode is selected, increase blockSpeed every 4 rounds
         if (easyMode == true) {
           if (roundCount % 4 == 1 && roundCount > 1){
             blockSpeed++;
@@ -287,6 +315,7 @@ public class Sketch extends PApplet {
           
           alternateStart();
         }
+        // If Hard mode is selected, increase blockSpeed every round
         else if (hardMode == true) {
           if (roundCount > 1){
             blockSpeed++;
@@ -294,6 +323,7 @@ public class Sketch extends PApplet {
         
           alternateStart();
         }
+        // If Normal mode is selected, increase blockSpeed every 2 rounds
         else {
           if (roundCount % 2 == 1 && roundCount > 1){
             blockSpeed++;
@@ -302,7 +332,7 @@ public class Sketch extends PApplet {
           alternateStart();
         }
 
-        // Move the game back down to the bottom of the screen every 15 rounds
+        // Move the game back down to the bottom of the screen every 15 rounds, continue from there
         if ((roundCount - 1) % 15 == 0 && roundCount > 1){
           intOldX = previousX.get(roundCount - 1);
           intOldY = previousY.get(roundCount - 1);
@@ -328,11 +358,14 @@ public class Sketch extends PApplet {
           RGBBlue.add(intNewB);
           roundCount = 1;
 
+          // Change to random background after the game moves down
           intBackground = (int) random(0,5);
         }
       }
 
+      // When the player ends the game, and the GAME OVER screen appears
       if (playerAlive == false) {
+        // If the player clicks the Play Again button, reset game with previous mode
         if (mouseX >= 260 && mouseX <= 260 + 120 && mouseY >= 280 && mouseY <= 280 + 50){
           roundCount = 1;
           blockSpeed = 1;
@@ -345,6 +378,7 @@ public class Sketch extends PApplet {
           playerAlive = true;
           intBackground = (int) random(0,5);
         }
+        // If the player clicks the Title Screen button, reset the game + mode variables and return back to title screen
         else if (mouseX >= 120 && mouseX <= 120 + 120 && mouseY >= 280 && mouseY <= 280 + 50) {
           roundCount = 1;
           blockSpeed = 1;
@@ -363,6 +397,7 @@ public class Sketch extends PApplet {
       }
     } 
     
+    // Display the mode selection panel if the player presses the start button of title screen, with the ability to close it by clicking on start button again
     if (gameStarted == false) {
       if (mouseX >= 90 && mouseX <= 90 + 315 && mouseY >= 205 && mouseY <= 205 + 70){
         if (modeSelection == false) {
@@ -374,16 +409,20 @@ public class Sketch extends PApplet {
       }
     }
     
+    // After the mode selection panel appears, sets the mode variables according to the mode hitbox the player clicks on
     if (modeSelection == true) {
+      // If the player selects Easy mode
       if (mouseX >= 120 && mouseX <= 120 + 70 && mouseY >= 390 && mouseY <= 390 + 70){
         easyMode = true;
         gameStarted = true;
         modeSelection = false;
       }
+      // If the player selects Normal mode
       if (mouseX >= 215 && mouseX <= 215 + 70 && mouseY >= 390 && mouseY <= 390 + 70){
         gameStarted = true;
         modeSelection = false;
       }
+      // If the player selects Easy mode
       if (mouseX >= 310 && mouseX <= 310 + 70 && mouseY >= 390 && mouseY <= 390 + 70){
         hardMode = true;
         gameStarted = true;
@@ -393,7 +432,7 @@ public class Sketch extends PApplet {
   }
 
   /**
-   * F
+   * Draw previous squares from previous rounds to display the continuous stacking of blocks and decreasing size of them
    */
   public void drawPrevious(){
     for (int i = 0; i < roundCount; i++) {
@@ -406,7 +445,7 @@ public class Sketch extends PApplet {
   }
 
   /**
-   * F
+   * Clear all ArrayLists containing the previous game's information
    */
   public void clearArrayLists(){
     previousX.clear();
@@ -419,7 +458,7 @@ public class Sketch extends PApplet {
   }
 
   /**
-   * F
+   * The beginning variables that are set at the beginning of a new game which also reset the game when declared again
    */
   public void beginningVariables(){
     previousX.add((width - beginningWidth) / 2);
@@ -436,7 +475,7 @@ public class Sketch extends PApplet {
   }
 
   /**
-   * F
+   * Have the moving blocks alternate from starting from the left and starting from the right each time
    */
   public void alternateStart(){
     if (roundCount % 2 == 1 && roundCount > 1){
