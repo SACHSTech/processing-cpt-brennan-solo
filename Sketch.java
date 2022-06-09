@@ -60,7 +60,7 @@ public class Sketch extends PApplet {
    * Called once at the beginning of execution, put your size all in this method
    */
   public void settings() {
-	// put your size call here
+  // put your size call here
     size(500, 500);
   }
 
@@ -213,21 +213,21 @@ public class Sketch extends PApplet {
         previousX.add(movingX.get(roundCount - 1));
         previousWidth.add(previousWidth.get(roundCount - 1) - movingX.get(roundCount - 1) + previousX.get(roundCount - 1));
         previousY.add(previousY.get(roundCount - 1) - blockHeight);
-        intScore++;
+        intScore = increaseScore(intScore);
       }
       // If the Mouse is clicked when the current block is to the left of the previous
       else if (movingX.get(roundCount - 1) <= previousX.get(roundCount - 1) && movingX.get(roundCount - 1) + previousWidth.get(roundCount - 1) >= previousX.get(roundCount - 1)){
         previousX.add(previousX.get(roundCount - 1));
         previousWidth.add(previousWidth.get(roundCount - 1) + movingX.get(roundCount - 1) - previousX.get(roundCount - 1));
         previousY.add(previousY.get(roundCount - 1) - blockHeight);
-        intScore++;
+        intScore = increaseScore(intScore);
       }
       // If the current block is clicked directly on the previous
       else if (movingX.get(roundCount - 1) == previousX.get(roundCount - 1)){
         previousX.add(movingX.get(roundCount - 1));
         previousWidth.add(previousWidth.get(roundCount - 1));
         previousY.add(previousY.get(roundCount - 1) - blockHeight);
-        intScore++;
+        intScore = increaseScore(intScore);
       }
       // If the block is clicked while not above the previous block at all, end game
       else {
@@ -486,4 +486,14 @@ public class Sketch extends PApplet {
     }
   }
 
+  /**
+    * Increases the score by 1
+    *
+    * @param n  The orginal score before the increase
+    * @return The score increased by 1
+    * 
+    */
+  private int increaseScore(int n){
+    return n + 1;
+  }
 }
